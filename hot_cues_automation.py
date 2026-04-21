@@ -272,15 +272,23 @@ def bars_before(drop_time: float, n_bars: int, bpm: float) -> float:
 
 
 def open_audio(filepath: str) -> None:
-    """Open *filepath* in the system's default audio player."""
+    """Open *filepath* in the system's default audio player.
+
+    Only files that exist on disk and carry an ``.mp3`` extension are opened.
+    """
+    path = Path(filepath).resolve()
+    if not path.is_file() or path.suffix.lower() != ".mp3":
+        print("    Cannot open: file does not exist or is not an MP3.")
+        return
+
     system = platform.system()
     try:
         if system == "Darwin":
-            subprocess.Popen(["open", filepath])
+            subprocess.Popen(["open", str(path)])
         elif system == "Windows":
-            os.startfile(filepath)  # type: ignore[attr-defined]
+            os.startfile(str(path))  # type: ignore[attr-defined]
         else:
-            subprocess.Popen(["xdg-open", filepath])
+            subprocess.Popen(["xdg-open", str(path)])
     except Exception as exc:
         print(f"    Could not open file: {exc}")
 
@@ -345,7 +353,10 @@ def process_file(filepath: str) -> dict:
     try:
         # ── 1. Load audio ────────────────────────────────────────────────────
         print(f"  Loading … ", end="", flush=True)
-        y, sr = librosa.load(filepath, sr=None, mono=True)
+        try:
+            y, sr = librosa.load(filepath, sr=None, mono=True)
+        except Exception as load_exc:
+            raise RuntimeError(f"Failed to load audio: {load_exc}") from load_exc
         print("done")
 
         # ── 2. BPM detection ─────────────────────────────────────────────────
