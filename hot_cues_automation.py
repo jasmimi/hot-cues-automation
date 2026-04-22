@@ -38,6 +38,11 @@ from mutagen.id3 import ID3, GEOB, COMM, ID3NoHeaderError, error as ID3Error
 from tqdm import tqdm
 
 
+# Safety net for testing: set to an int (e.g. 3) to process only that many files.
+# Use None to process all discovered MP3 files.
+max_files_processed: Optional[int] = None
+
+
 # ─── Serato Markers2 binary helpers ──────────────────────────────────────────
 
 _MARKERS2_VERSION = b"\x01\x01"
@@ -445,7 +450,14 @@ def main() -> None:
         print("No MP3 files found in the current directory.")
         return
 
-    print(f"Found {len(mp3_files)} MP3 file(s) in '{directory.resolve()}'.\n")
+    total_found = len(mp3_files)
+    if max_files_processed is not None and max_files_processed > 0:
+        mp3_files = mp3_files[:max_files_processed]
+
+    print(f"Found {total_found} MP3 file(s) in '{directory.resolve()}'.")
+    if max_files_processed is not None and max_files_processed > 0:
+        print(f"Safety limit active: processing up to {len(mp3_files)} file(s).")
+    print()
     print("─" * 60)
 
     t_start = time.time()
