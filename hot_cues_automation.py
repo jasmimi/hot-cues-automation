@@ -7,7 +7,7 @@ compatible hot cues for drum-and-bass tracks.
 
 Requirements per track (before any action is taken):
   • Detected BPM is ~174 (±4) or ~87 (±4, half-time DNB)
-  • No Serato hot cues are already stored in the file
+  • No Serato marker data is already stored in the file
 
 For each qualifying track the script will:
   1. Detect musical drops (n total).
@@ -137,16 +137,31 @@ def _decode_markers2(data: bytes) -> list[dict]:
 # ─── Serato file I/O ──────────────────────────────────────────────────────────
 
 
+def _load_id3(filepath: str) -> Optional[ID3]:
+    """Return ID3 tags for *filepath*, or ``None`` when the file has no ID3 tag."""
+    try:
+        return ID3(filepath)
+    except ID3NoHeaderError:
+        return None
+    except ID3Error as exc:
+        raise RuntimeError(f"Failed to read ID3 tags: {exc}") from exc
+
+
+def has_serato_markers(filepath: str) -> bool:
+    """Return *True* if the file already contains a Serato Markers2 frame."""
+    tag = _load_id3(filepath)
+    return tag is not None and tag.get("GEOB:Serato Markers2") is not None
+
+
 def has_hot_cues(filepath: str) -> bool:
     """Return *True* if the file already contains at least one Serato hot cue."""
-    try:
-        tag = ID3(filepath)
-        geob = tag.get("GEOB:Serato Markers2")
-        if geob is None:
-            return False
-        return any(e["type"] == "CUE" for e in _decode_markers2(geob.data))
-    except (ID3NoHeaderError, ID3Error, Exception):
+    tag = _load_id3(filepath)
+    if tag is None:
         return False
+    geob = tag.get("GEOB:Serato Markers2")
+    if geob is None:
+        return False
+    return any(e["type"] == "CUE" for e in _decode_markers2(geob.data))
 
 
 def write_hot_cues(filepath: str, cue_points: list[tuple[int, str]]) -> None:
@@ -165,6 +180,11 @@ def write_hot_cues(filepath: str, cue_points: list[tuple[int, str]]) -> None:
         tag = ID3(filepath)
     except ID3NoHeaderError:
         tag = ID3()
+    except ID3Error as exc:
+        raise RuntimeError(f"Failed to read ID3 tags: {exc}") from exc
+
+    if tag.get("GEOB:Serato Markers2") is not None:
+        raise RuntimeError("Refusing to overwrite existing Serato Markers2 data")
 
     encoded_cues = [
         (i, pos_ms, _CUE_COLOURS[i % len(_CUE_COLOURS)], name)
@@ -179,10 +199,10 @@ def write_hot_cues(filepath: str, cue_points: list[tuple[int, str]]) -> None:
         data=_encode_markers2(encoded_cues),
     )
 
-    tag["COMM::eng"] = COMM(
+    tag["COMM:hot-cues-automation:eng"] = COMM(
         encoding=3,
         lang="eng",
-        desc="",
+        desc="hot-cues-automation",
         text="hot cues generated",
     )
 
@@ -342,8 +362,8 @@ def process_file(filepath: str) -> dict:
     Analyse and (if applicable) rewrite *filepath* with Serato hot cues.
 
     Returns a result dict:
-        status  – one of: written | skipped_not_dnb | skipped_has_cues |
-                          skipped_user | error
+        status  – one of: written | skipped_not_dnb |
+                          skipped_has_serato_markers | skipped_user | error
         name    – basename of the file
         bpm     – detected BPM (may be absent on early error)
         error   – error message string (only when status == "error")
@@ -357,7 +377,13 @@ def process_file(filepath: str) -> dict:
     t0 = time.time()
 
     try:
-        # ── 1. Load audio ────────────────────────────────────────────────────
+        # ── 1. Check for existing Serato marker data ─────────────────────────
+        if has_serato_markers(filepath):
+            result["status"] = "skipped_has_serato_markers"
+            result["elapsed"] = time.time() - t0
+            return result
+
+        # ── 2. Load audio ────────────────────────────────────────────────────
         print(f"  Loading … ", end="", flush=True)
         try:
             y, sr = librosa.load(filepath, sr=None, mono=True)
@@ -365,7 +391,7 @@ def process_file(filepath: str) -> dict:
             raise RuntimeError(f"Failed to load audio: {load_exc}") from load_exc
         print("done")
 
-        # ── 2. BPM detection ─────────────────────────────────────────────────
+        # ── 3. BPM detection ─────────────────────────────────────────────────
         print(f"  Detecting BPM … ", end="", flush=True)
         bpm = detect_bpm(y, sr)
         result["bpm"] = bpm
@@ -377,12 +403,6 @@ def process_file(filepath: str) -> dict:
             return result
 
         bpm_full = normalise_bpm(bpm)
-
-        # ── 3. Check for existing hot cues ───────────────────────────────────
-        if has_hot_cues(filepath):
-            result["status"] = "skipped_has_cues"
-            result["elapsed"] = time.time() - t0
-            return result
 
         # ── 4. Detect drops ───────────────────────────────────────────────────
         print(f"  Detecting drops … ", end="", flush=True)
@@ -496,6 +516,7 @@ def main(argv: Optional[list[str]] = None) -> int:
             "written":          "✓  hot cues written",
             "skipped_not_dnb":  f"–  not DNB ({result.get('bpm', 0):.1f} BPM, skipped)",
             "skipped_has_cues": "–  already has hot cues (skipped)",
+            "skipped_has_serato_markers": "–  already has Serato marker data (skipped)",
             "skipped_user":     "–  skipped by user",
             "skipped":          "–  skipped",
             "error":            f"✗  error: {result.get('error', 'unknown')}",
