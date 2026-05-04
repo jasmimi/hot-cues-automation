@@ -23,6 +23,7 @@ A summary is printed at the end showing processing time, tracks processed,
 tracks written, and failures.
 """
 
+import argparse
 import os
 import platform
 import struct
@@ -437,15 +438,37 @@ def process_file(filepath: str) -> dict:
 # ─── Entry point ──────────────────────────────────────────────────────────────
 
 
-def main() -> None:
-    directory = Path(".")
+def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description=(
+            "Scan a folder for MP3 files and write Serato-compatible hot cues "
+            "for qualifying drum-and-bass tracks."
+        )
+    )
+    parser.add_argument(
+        "directory",
+        nargs="?",
+        default=".",
+        help="folder containing MP3 files (default: current directory)",
+    )
+    return parser.parse_args(argv)
+
+
+def main(argv: Optional[list[str]] = None) -> int:
+    args = parse_args(argv)
+    directory = Path(args.directory).expanduser().resolve()
+
+    if not directory.is_dir():
+        print(f"Directory not found: {directory}")
+        return 2
+
     mp3_files = sorted(directory.glob("*.mp3"))
 
     if not mp3_files:
-        print("No MP3 files found in the current directory.")
-        return
+        print(f"No MP3 files found in '{directory}'.")
+        return 0
 
-    print(f"Found {len(mp3_files)} MP3 file(s) in '{directory.resolve()}'.\n")
+    print(f"Found {len(mp3_files)} MP3 file(s) in '{directory}'.\n")
     print("─" * 60)
 
     t_start = time.time()
@@ -493,6 +516,8 @@ def main() -> None:
             if r["status"] == "error":
                 print(f"  • {r['name']}: {r.get('error', 'unknown error')}")
 
+    return 1 if n_failed else 0
+
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
