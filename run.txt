@@ -1,0 +1,150 @@
+(.venv) jasmineamohia@MacBook-Air-86 hot-cues-automation % python hot_cues_automation.py
+Found 12 MP3 file(s) in '/Volumes/Elements SE/repos/hot-cues-automation'.
+
+────────────────────────────────────────────────────────────
+
+▶ [SPOTDOWNLOADER.COM] Afterlife.mp3
+  Loading … done
+  Detecting BPM … 114.8 BPM
+  –  not DNB (114.8 BPM, skipped)
+  (54.9s)
+────────────────────────────────────────────────────────────
+
+▶ [SPOTDOWNLOADER.COM] All I Know.mp3
+  Loading … done
+  Detecting BPM … 90.7 BPM
+  –  already has hot cues (skipped)
+  (0.6s)
+────────────────────────────────────────────────────────────
+
+▶ [SPOTDOWNLOADER.COM] Arctic.mp3
+  Loading … done
+  Detecting BPM … 87.6 BPM
+  –  already has hot cues (skipped)
+  (0.7s)
+────────────────────────────────────────────────────────────
+
+▶ [SPOTDOWNLOADER.COM] Area Code.mp3
+  Loading … done
+  Detecting BPM … 87.6 BPM
+  –  already has hot cues (skipped)
+  (0.6s)
+────────────────────────────────────────────────────────────
+
+▶ [SPOTDOWNLOADER.COM] Ascension.mp3
+  Loading … done
+  Detecting BPM … 87.6 BPM
+  Detecting drops … 2 found
+
+  [SPOTDOWNLOADER.COM] Ascension.mp3
+  2 drop(s) detected:
+    [1]  0:23.85
+    [2]  2:01.63
+
+  Choose a drop [1–2], [p] to open file for preview, or [s] to skip:
+  > p
+  > 1
+  Writing [SPOTDOWNLOADER.COM] Ascension.mp3: ████████████████████ 00:00
+  ✓  hot cues written
+  (55.6s)
+────────────────────────────────────────────────────────────
+
+▶ [SPOTDOWNLOADER.COM] Bring Me Joy.mp3
+  Loading … done
+  Detecting BPM … 172.3 BPM
+  –  already has hot cues (skipped)
+  (0.7s)
+────────────────────────────────────────────────────────────
+
+▶ [SPOTDOWNLOADER.COM] California Dreamin'.mp3
+  Loading … done
+  Detecting BPM … 87.6 BPM
+  Detecting drops … 1 found
+
+  [SPOTDOWNLOADER.COM] California Dreamin'.mp3
+  1 drop(s) detected:
+    [1]  0:22.12
+
+  Choose a drop [1–1], [p] to open file for preview, or [s] to skip:
+  > p
+  > 1
+  Writing [SPOTDOWNLOADER.COM] California Dreamin'.mp3: ██████████ 00:00
+  ✓  hot cues written
+  (378.8s)
+────────────────────────────────────────────────────────────
+
+▶ [SPOTDOWNLOADER.COM] Call The Hurse.mp3
+  Loading … done
+  Detecting BPM … 87.6 BPM
+  Detecting drops … 2 found
+
+  [SPOTDOWNLOADER.COM] Call The Hurse.mp3
+  2 drop(s) detected:
+    [1]  0:24.25
+    [2]  2:01.05
+
+  Choose a drop [1–2], [p] to open file for preview, or [s] to skip:
+  > 1
+  Writing [SPOTDOWNLOADER.COM] Call The Hurse.mp3: ███████████████ 00:00
+  ✓  hot cues written
+  (6.3s)
+────────────────────────────────────────────────────────────
+
+▶ [SPOTDOWNLOADER.COM] Chop Dem Down (feat. RoRo).mp3
+  Loading … done
+  Detecting BPM … 172.3 BPM
+  –  already has hot cues (skipped)
+  (0.6s)
+────────────────────────────────────────────────────────────
+
+▶ [SPOTDOWNLOADER.COM] Come Down.mp3
+  Loading … done
+  Detecting BPM … 172.3 BPM
+  Detecting drops … 1 found
+
+  [SPOTDOWNLOADER.COM] Come Down.mp3
+  1 drop(s) detected:
+    [1]  0:23.49
+
+  Choose a drop [1–1], [p] to open file for preview, or [s] to skip:
+  > p
+  > 4
+    Enter a number between 1 and 1.
+  > 1
+  Writing [SPOTDOWNLOADER.COM] Come Down.mp3: ████████████████████ 00:00
+  ✓  hot cues written
+  (20.8s)
+────────────────────────────────────────────────────────────
+
+▶ [SPOTDOWNLOADER.COM] Dawning.mp3
+  Loading … done
+  Detecting BPM … 114.8 BPM
+  –  not DNB (114.8 BPM, skipped)
+  (1.1s)
+────────────────────────────────────────────────────────────
+
+▶ [SPOTDOWNLOADER.COM] Deep Blue.mp3
+  Loading … done
+  Detecting BPM … 172.3 BPM
+  Detecting drops … 1 found
+
+  [SPOTDOWNLOADER.COM] Deep Blue.mp3
+  1 drop(s) detected:
+    [1]  0:12.81
+
+  Choose a drop [1–1], [p] to open file for preview, or [s] to skip:
+  > 1
+  Writing [SPOTDOWNLOADER.COM] Deep Blue.mp3: ████████████████████ 00:00
+  ✓  hot cues written
+  (5.0s)
+────────────────────────────────────────────────────────────
+
+════════════════════════════════════════════════════════════
+  Summary
+────────────────────────────────────────────────────────────
+  MP3 tracks processed   : 12
+  Hot cues written       : 5
+  Skipped                : 7
+  Failed                 : 0
+  Total processing time  : 525.8s
+════════════════════════════════════════════════════════════
