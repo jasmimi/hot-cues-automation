@@ -2,8 +2,8 @@
 
 Adds Serato-compatible hot cues to drum-and-bass MP3 files.
 
-The script scans one folder for `.mp3` files, detects DNB tempo tracks, skips
-files that already contain Serato hot cues, asks which detected drop to use,
+The script scans one folder for `.mp3` files, skips files that already contain
+Serato marker data, detects DNB tempo tracks, asks which detected drop to use,
 then writes three hot cues into the MP3's ID3 tags.
 
 ## Install as a command
@@ -68,7 +68,8 @@ selected folder.
 - The script writes ID3 tags directly into MP3 files, so test on copies first.
 - During processing, enter a drop number to write cues, `p` to preview the file
   in the system audio player, or `s` to skip the track.
-- Files that already have Serato hot cues are skipped.
+- Files that already have Serato marker data are skipped so existing Serato
+  cues, loops, or other marker metadata are not overwritten.
 script to automate process of adding hot cues in dnb tracks... hopefully. based off of my brother eyes method of the following hot cues:
 1. first downbeat of a track
 2. 16 bars before chosen drop
